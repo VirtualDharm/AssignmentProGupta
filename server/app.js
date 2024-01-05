@@ -10,10 +10,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Firebase initialization
-const serviceAccount = require('./path/to/your/firebase-admin-key.json');
+const serviceAccount = require('./firebase.json');
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://your-firebase-project-id.firebaseio.com',
+  databaseURL: 'https://assignmentproguptag-default-rtdb.asia-southeast1.firebasedatabase.app',
 });
 
 // Set up routes
