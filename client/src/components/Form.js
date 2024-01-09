@@ -20,6 +20,7 @@ if (!firebase.apps.length) {
 }
 
 const MyForm = () => {
+const [form] = Form.useForm(); // Use the useForm hook to create a form instance
 const [name, setName] = useState('');
 const [email, setEmail] = useState('');
 const [dob, setDob] = useState(null);
@@ -92,6 +93,8 @@ const handleSendOTP = async () => {
           setEmail('');
           setDob(null);
           setPhoneNumber('');
+          // Reset the form fields
+          form.resetFields();
         } else {
           message.error('Failed to submit form. Please try again. Checking point 1');
         }
@@ -110,14 +113,13 @@ const handleSendOTP = async () => {
   }
 };
 
-
 useEffect(() => {
   // Cleanup the loading state when the component unmounts
   return () => setLoading(false);
 }, []);
 
 return (
-  <Form className="form-container" onFinish={handleSendOTP}>
+  <Form className="form-container" onFinish={handleSendOTP} form={form}>
     <Form.Item className="form-item" label="Name" name="name" rules={[{ required: true, message: 'Please input your name!' }]}>
       <Input className="input-field" value={name} onChange={(e) => setName(e.target.value)} />
     </Form.Item>
