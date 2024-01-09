@@ -2,6 +2,21 @@ import 'antd/dist/reset.css';
 import React, { useState, useEffect } from 'react';
 import { DatePicker, Form, Input, Button, message } from 'antd';
 import './Form.css';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCcGiLbCHkIe8DJu9MntX1c-lz0832EzjI",
+  authDomain: "assignmentproguptaji.firebaseapp.com",
+  projectId: "assignmentproguptaji",
+  storageBucket: "assignmentproguptaji.appspot.com",
+  messagingSenderId: "201915932982",
+  appId: "1:201915932982:web:0de5c48097fdf598a69397"
+};
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 
 const MyForm = () => {
 const [name, setName] = useState('');
@@ -38,35 +53,49 @@ const validateDateOfBirth = (rule, value) => {
   });
 };
 
-const handleSubmit = async () => {
-  if (!name || !email || !dob || !phoneNumber) {
-    message.error('Please fill out all fields');
-    return;
-  }
-
+const handleSendOTP = async () => {
   try {
     setLoading(true);
 
-    const response = await fetch('http://localhost:5000/api/verification/verify-phone-number', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name, email, dob, phoneNumber: `+91${phoneNumber}` }),
+    const recaptchaContainer = document.getElementById('recaptcha-container');
+    const appVerifier = new firebase.auth.RecaptchaVerifier(recaptchaContainer, {
+      size: 'invisible',
     });
 
-    if (response.ok) {
-      message.success('Form submitted successfully!');
-      // Optionally, you can reset the form fields after successful submission
-      setName('');
-      setEmail('');
-      setDob(null);
-      setPhoneNumber('');
+    const confirmationResult = await firebase.auth().signInWithPhoneNumber(`+91${phoneNumber}`, appVerifier);
+    const code = window.prompt('Enter OTP sent to your phone');
+
+    if (code) {
+      const credential = firebase.auth.PhoneAuthProvider.credential(confirmationResult.verificationId, code);
+      await firebase.auth().signInWithCredential(credential);
+      message.success('Phone number verified successfully!');
+
+      try {
+        const response = await fetch('http://localhost:5000/api/verification/verify-phone-number', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name, email, dob, phoneNumber: `+91${phoneNumber}` }),
+        });
+        if (response.ok) {
+          message.success('Form submitted successfully!');
+          setName('');
+          setEmail('');
+          setDob(null);
+          setPhoneNumber('');
+        } else {
+          message.error('Failed to submit form. Please try again. Checking point 1');
+        }
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        message.error('An error occurred. Please try again.');
+      }
     } else {
-      message.error('Failed to submit form. Please try again. Checking point 1');
+      message.error('Failed to verify OTP. Please try again.');
     }
   } catch (error) {
-    console.error('Error submitting form:', error);
+    console.error('Error sending OTP:', error);
     message.error('An error occurred. Please try again.');
   } finally {
     setLoading(false);
@@ -80,7 +109,7 @@ useEffect(() => {
 }, []);
 
 return (
-  <Form className="form-container" onFinish={handleSubmit}>
+  <Form className="form-container" onFinish={handleSendOTP}>
     <Form.Item className="form-item" label="Name" name="name" rules={[{ required: true, message: 'Please input your name!' }]}>
       <Input className="input-field" value={name} onChange={(e) => setName(e.target.value)} />
     </Form.Item>
@@ -94,8 +123,9 @@ return (
       <Input className="input-field" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
     </Form.Item>
     <Form.Item className="form-item">
+      <div id="recaptcha-container"></div>
       <Button className="submit-button" type="primary" htmlType="submit" loading={loading}>
-        Submit
+        Send OTP
       </Button>
     </Form.Item>
   </Form>
