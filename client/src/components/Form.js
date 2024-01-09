@@ -1,3 +1,4 @@
+// Form.js
 import 'antd/dist/reset.css';
 import React, { useState, useEffect } from 'react';
 import { DatePicker, Form, Input, Button, message } from 'antd';
@@ -24,6 +25,7 @@ const [email, setEmail] = useState('');
 const [dob, setDob] = useState(null);
 const [phoneNumber, setPhoneNumber] = useState('');
 const [loading, setLoading] = useState(false);
+const [lastOtpRequestTime, setLastOtpRequestTime] = useState(null);
 
 const handleDateChange = (date) => {
   setDob(date);
@@ -55,7 +57,13 @@ const validateDateOfBirth = (rule, value) => {
 
 const handleSendOTP = async () => {
   try {
+    // Check if enough time has passed since the last OTP request
+    if (lastOtpRequestTime && Date.now() - lastOtpRequestTime < 6000) {
+      message.error('Please wait before sending another OTP.');
+      return;
+    }
     setLoading(true);
+    setLastOtpRequestTime(Date.now());
 
     const recaptchaContainer = document.getElementById('recaptcha-container');
     const appVerifier = new firebase.auth.RecaptchaVerifier(recaptchaContainer, {
@@ -71,7 +79,7 @@ const handleSendOTP = async () => {
       message.success('Phone number verified successfully!');
 
       try {
-        const response = await fetch('http://localhost:5000/api/verification/verify-phone-number', {
+        const response = await fetch('http://localhost:5000/api/formsubmission', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
