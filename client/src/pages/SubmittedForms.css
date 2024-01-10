@@ -1,0 +1,98 @@
+/* SubmittedForms.css */
+.forms-container {
+margin: 20px;
+padding: 20px;
+}
+
+.forms-table {
+width: 60%;
+border-collapse: collapse;
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+overflow: hidden;
+}
+
+.forms-table th, .forms-table td {
+border: 1px solid #ddd;
+padding: 12px;
+text-align: left;
+}
+
+.forms-table th {
+background-color: #f2f2f2;
+}
+
+.forms-table tbody tr:hover {
+background-color: #f5f5f5;
+}
+
+.forms-table td {
+max-width: 200px;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+
+.forms-table td:first-child {
+border-left: 0;
+}
+
+.forms-table td:last-child {
+border-right: 0;
+}
+
+.forms-table th, .forms-table td {
+transition: background-color 0.3s;
+}
+
+.forms-table caption {
+text-align: left;
+font-size: 1.2em;
+font-weight: bold;
+margin-bottom: 10px;
+}
+
+@media screen and (max-width: 600px) {
+.forms-table {
+    overflow-x: auto;
+    display: block;
+}
+.forms-table thead, .forms-table tbody, .forms-table th, .forms-table td, .forms-table tr {
+    display: block;
+}
+.forms-table thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+}
+.forms-table tr {
+    margin: 0 0 15px 0;
+}
+.forms-table td {
+    border: none;
+    border-bottom: 1px solid #ddd;
+    position: relative;
+    padding-left: 50%;
+}
+.forms-table td:before {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.forms-table td:nth-of-type(1):before {
+    content: "Name";
+}
+.forms-table td:nth-of-type(2):before {
+    content: "Email";
+}
+.forms-table td:nth-of-type(3):before {
+    content: "DOB";
+}
+.forms-table td:nth-of-type(4):before {
+    content: "Phone No";
+}
+}

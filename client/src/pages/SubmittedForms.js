@@ -1,12 +1,14 @@
+// SubmittedForms.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './SubmittedForms.css'; // Import the CSS file for styling
 
 const SubmittedForms = () => {
   const [forms, setForms] = useState([]);
 
   useEffect(() => {
     // Fetch and set submitted forms
-    axios.get('/api/forms')
+    axios.get('http://localhost:5000/api/forms')
       .then(response => setForms(response.data))
       .catch(error => console.error(error));
   }, []);
@@ -14,14 +16,28 @@ const SubmittedForms = () => {
   return (
     <div>
       <h2>Submitted Forms</h2>
-      <ul>
-        {forms.map(form => (
-          <li key={form._id}>
-            <p>Name: {form.name}</p>
-            <p>Email: {form.email}</p>
-          </li>
-        ))}
-      </ul>
+      <table className="forms-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>DOB</th>
+            <th>Phone No</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {forms.map(form => (
+            <tr key={form._id}>
+              <td>{form.name}</td>
+              <td>{form.email}</td>
+              <td>{new Date(form.dob).toLocaleDateString()}</td>
+              <td>{form.phoneNumber}</td>
+              <td>{form.submissionTime ? new Date(form.submissionTime).toLocaleString() : '1-10-2023'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

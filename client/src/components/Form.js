@@ -5,6 +5,7 @@ import { DatePicker, Form, Input, Button, message } from 'antd';
 import './Form.css';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
+import SubmittedForms from '../pages/SubmittedForms'; 
 
 const firebaseConfig = {
   apiKey: "AIzaSyCcGiLbCHkIe8DJu9MntX1c-lz0832EzjI",
@@ -20,13 +21,14 @@ if (!firebase.apps.length) {
 }
 
 const MyForm = () => {
-const [form] = Form.useForm(); // Use the useForm hook to create a form instance
+const [form] = Form.useForm();
 const [name, setName] = useState('');
 const [email, setEmail] = useState('');
 const [dob, setDob] = useState(null);
 const [phoneNumber, setPhoneNumber] = useState('');
 const [loading, setLoading] = useState(false);
 const [lastOtpRequestTime, setLastOtpRequestTime] = useState(null);
+const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 
 const handleDateChange = (date) => {
   setDob(date);
@@ -95,6 +97,8 @@ const handleSendOTP = async () => {
           setPhoneNumber('');
           // Reset the form fields
           form.resetFields();
+          // Set the form as submitted
+          setIsFormSubmitted(true);
         } else {
           message.error('Failed to submit form. Please try again. Checking point 1');
         }
@@ -119,26 +123,34 @@ useEffect(() => {
 }, []);
 
 return (
-  <Form className="form-container" onFinish={handleSendOTP} form={form}>
-    <Form.Item className="form-item" label="Name" name="name" rules={[{ required: true, message: 'Please input your name!' }]}>
-      <Input className="input-field" value={name} onChange={(e) => setName(e.target.value)} />
-    </Form.Item>
-    <Form.Item className="form-item" label="Email" name="email" rules={[{ required: true, type: 'email', message: 'Please input a valid email!' }]}>
-      <Input className="input-field" value={email} onChange={(e) => setEmail(e.target.value)} />
-    </Form.Item>
-    <Form.Item className="form-item" label="Date of Birth" name="dob" rules={[{ required: true, message: 'Please select your date of birth!' }, { validator: validateDateOfBirth }]}>
-      <DatePicker className="date-picker" onChange={handleDateChange} />
-    </Form.Item>
-    <Form.Item className="form-item" label="Phone Number" name="phoneNumber" rules={[{ required: true, message: 'Please input your phone number!' }]}>
-      <Input className="input-field" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
-    </Form.Item>
-    <Form.Item className="form-item">
-      <div id="recaptcha-container"></div>
-      <Button className="submit-button" type="primary" htmlType="submit" loading={loading}>
-        Send OTP
-      </Button>
-    </Form.Item>
-  </Form>
+  <>
+    {!isFormSubmitted ? (
+      <Form className="form-container" onFinish={handleSendOTP} form={form}>
+        <Form.Item className="form-item" label="Name" name="name" rules={[{ required: true, message: 'Please input your name!' }]}>
+          <Input className="input-field" value={name} onChange={(e) => setName(e.target.value)} />
+        </Form.Item>
+        <Form.Item className="form-item" label="Email" name="email" rules={[{ required: true, type: 'email', message: 'Please input a valid email!' }]}>
+          <Input className="input-field" value={email} onChange={(e) => setEmail(e.target.value)} />
+        </Form.Item>
+        <Form.Item className="form-item" label="Date of Birth" name="dob" rules={[{ required: true, message: 'Please select your date of birth!' }, { validator: validateDateOfBirth }]}>
+          <DatePicker className="date-picker" onChange={handleDateChange} />
+        </Form.Item>
+        <Form.Item className="form-item" label="Phone Number" name="phoneNumber" rules={[{ required: true, message: 'Please input your phone number!' }]}>
+          <Input className="input-field" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
+        </Form.Item>
+        <Form.Item className="form-item">
+          <div id="recaptcha-container"></div>
+          <Button className="submit-button" type="primary" htmlType="submit" loading={loading}>
+            Send OTP
+          </Button>
+        </Form.Item>
+      </Form>
+    ) : (
+      <div className='form-item'>
+        <SubmittedForms />
+      </div>
+    )}
+  </>
 );
 };
 
