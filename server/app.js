@@ -1,3 +1,7 @@
+// app.js
+const dotenv = require('dotenv');
+dotenv.config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -16,7 +20,7 @@ app.use(limiter);
 app.use(bodyParser.json());
 app.use(cors());
 
-const URI = 'mongodb+srv://lama:lama@cluster0.fsrfj2t.mongodb.net/?retryWrites=true&w=majority';
+const URI = process.env.MONGODB_URI;
 
 mongoose.connect(URI, {
   useNewUrlParser: true,

@@ -1,13 +1,12 @@
 // SubmittedForms.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './SubmittedForms.css'; // Import the CSS file for styling
+import './SubmittedForms.css';
 
 const SubmittedForms = () => {
   const [forms, setForms] = useState([]);
 
   useEffect(() => {
-    // Fetch and set submitted forms
     axios.get('http://localhost:5000/api/forms')
       .then(response => setForms(response.data))
       .catch(error => console.error(error));
