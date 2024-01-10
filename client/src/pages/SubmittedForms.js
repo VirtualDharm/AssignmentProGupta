@@ -7,7 +7,7 @@ const SubmittedForms = () => {
   const [forms, setForms] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/forms')
+    axios.get('http://192.46.208.104:5000/api/forms')
       .then(response => setForms(response.data))
       .catch(error => console.error(error));
   }, []);
