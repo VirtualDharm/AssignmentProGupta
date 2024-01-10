@@ -14,7 +14,7 @@ const SubmittedForms = () => {
   }, []);
 
   return (
-    <div>
+    <div style={{padding: 2 + 'em'}}>
       <h2>Submitted Forms</h2>
       <table className="forms-table">
         <thead>
