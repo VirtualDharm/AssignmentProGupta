@@ -82,7 +82,7 @@ const handleSendOTP = async () => {
       message.success('Phone number verified successfully!');
 
       try {
-        const response = await fetch('https://192.46.208.104:5000/api/formsubmission', {
+        const response = await fetch('http://192.46.208.104:5000/api/formsubmission', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
